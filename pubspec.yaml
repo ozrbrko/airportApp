@@ -40,7 +40,7 @@ dependencies:
   json_annotation: ^4.6.0
   build_runner: ^2.2.0
   form_field_validator: ^1.1.0
-
+  google_maps_flutter:
 
 dev_dependencies:
   flutter_test:

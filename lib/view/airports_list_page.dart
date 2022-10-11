@@ -1,4 +1,5 @@
 import 'package:airportal/model/airports_model.dart';
+import 'package:airportal/view/airports_map_page.dart';
 import 'package:airportal/view/login_page.dart';
 import 'package:airportal/viewmodel/airports_view_model.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import '../component/constant/enum.dart';
 import '../component/responsive/frame_size.dart';
 
-var tfSearch = TextEditingController();
 
 class AirportsListPage extends StatefulWidget {
   const AirportsListPage({Key? key}) : super(key: key);
@@ -17,13 +17,15 @@ class AirportsListPage extends StatefulWidget {
 }
 
 class _AirportsListPageState extends State<AirportsListPage> {
+
   AirportsViewModel? airportsStore;
+  var tfSearch = TextEditingController();
 
   @override
   void initState() {
     airportsStore = AirportsViewModel();
     airportsStore!.init();
-    airportsStore!.getAirportsDatas();
+    airportsStore!.getAirportsDatas("ank");
     super.initState();
   }
 
@@ -139,7 +141,14 @@ class _AirportsListPageState extends State<AirportsListPage> {
                                             154.9714285714286,
                                         child: GestureDetector(
                                           onTap: () {
-                                            print(tfSearch.text);
+                                            setState(() {
+                                              print(tfSearch.text);
+                                              airportsStore = AirportsViewModel();
+                                              airportsStore!.init();
+                                              airportsStore!.getAirportsDatas("${tfSearch.text}");
+                                            });
+
+
                                           },
                                           child: Container(
                                               height: FrameSize.screenHeight! /
@@ -148,9 +157,9 @@ class _AirportsListPageState extends State<AirportsListPage> {
                                                   22.13877551020408,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.all(
-                                                    Radius.circular(
-                                                        FrameSize.screenHeight! /
-                                                            25.82857142857143)),
+                                                    Radius.circular(FrameSize
+                                                            .screenHeight! /
+                                                        25.82857142857143)),
                                                 color: Colors.white,
                                               ),
                                               child: Icon(Icons.search)),
@@ -166,94 +175,124 @@ class _AirportsListPageState extends State<AirportsListPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Container(
-                      color: Colors.grey[100],
-                      height: FrameSize.screenHeight!/1.25,
-                      child: ListView.builder(
-                          itemCount: airportsStore!.airportsResultList!.length,
-                          itemBuilder: (context, index) {
-                            AirportsResult? item =
-                                airportsStore!.airportsResultList![index];
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Container(
-
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      color: Colors.white,
-
-
-                                    ),
-
-                                    width: FrameSize.screenWidth,
-                                    height: FrameSize.screenHeight!/7,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-
-
-                                            children: [
-                                              Text(
-                                                "${item!.shortName!.toString()} ${item.countryCode!.toString()}",
-                                                style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
-                                              ),
-
-                                              Row(
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-
+                    child: Stack(children: [
+                      Container(
+                        color: Colors.grey[100],
+                        height: FrameSize.screenHeight! / 1.25,
+                        child: ListView.builder(
+                            itemCount:
+                                airportsStore!.airportsResultList!.length,
+                            itemBuilder: (context, index) {
+                              AirportsResult? item =
+                                  airportsStore!.airportsResultList![index];
+                              return Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        color: Colors.white
+                                      ),
+                                      width: FrameSize.screenWidth,
+                                      height: FrameSize.screenHeight! / 7,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "${item!.shortName!.toString()} ${item.countryCode!.toString()}",
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5.0),
+                                                  child: Row(
                                                     children: [
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(top: 8.0),
-                                                        child: Text(
-                                                            "Icao: ${item.icao.toString()} "
-                                                        ),
+                                                      Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 8.0),
+                                                            child: Text(
+                                                                "Icao: ${item.icao.toString()} "),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 8.0),
+                                                            child: Text(
+                                                                "Iata: ${item.iata.toString()} "),
+                                                          ),
+                                                        ],
                                                       ),
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(top: 8.0),
-                                                        child: Text(
-                                                            "Iata: ${item.iata.toString()} "                                                      ),
+                                                      Column(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 8.0,
+                                                                    left: 15.0),
+                                                            child: Text(
+                                                                "Lat: ${item.location!.lat.toString()} "),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 8.0,
+                                                                    left: 23),
+                                                            child: Text(
+                                                                "Lon: ${item.location!.lon.toString()} "),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
                                                   ),
-                                                  Column(
-                                                    children: [
-
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(top: 8.0,left: 15.0),
-                                                        child: Text(
-                                                            "Lat: ${item.location!.lat.toString()} "
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(top: 8.0,left: 23),
-                                                        child: Text(
-                                                            "Lon: ${item.location!.lon.toString()} "                                                      ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-
-                                            ],
-                                          ),
-
-                                        ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                )
-                              ],
-                            );
-                          }),
-                    ),
+                                  )
+                                ],
+                              );
+                            }),
+                      ),
+
+                      Positioned(
+                        left: FrameSize.screenWidth!/1.25,
+                        top: FrameSize.screenHeight!/1.5,
+                        child: FloatingActionButton( onPressed: () {
+
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => AirportsPage()));
+
+
+                        },
+                          backgroundColor: Color(0xff224459),
+                          child: const Icon(Icons.map),),
+                      )
+                    ]),
                   )
                 ],
               ),

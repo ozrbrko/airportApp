@@ -7,14 +7,14 @@ import '../model/airports_model.dart';
 class AirportsService {
   Dio? dio;
 
-  Future<AirportsModel?> getAirportsData() async {
+  Future<AirportsModel?> getAirportsData(String param) async {
     dio = Dio();
 
     // dio!.options.headers['content-Type'] = 'application/json';
     dio!.options.headers["X-RapidAPI-Key"] =
     "11f5462e00msh3e1afab23dfd0d2p13fc3djsn816e363e099d";
 
-    var parameterData = {"q": "ist"};
+    var parameterData = {"q": "$param"};
 
     try {
       Response response =

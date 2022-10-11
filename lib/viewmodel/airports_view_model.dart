@@ -24,11 +24,11 @@ abstract class _AirportsViewModel with Store {
   PageState pageState = PageState.NORMAL;
 
   @action
-  Future getAirportsDatas() async {
+  Future getAirportsDatas(String param) async {
     try {
       pageState = PageState.LOADING;
 
-      airportsFuture = ObservableFuture(_service!.getAirportsData());
+      airportsFuture = ObservableFuture(_service!.getAirportsData(param));
       airportsFuture!.then((value) {
         value!.items!.forEach((element) {
           airportsResultList!.add(element);

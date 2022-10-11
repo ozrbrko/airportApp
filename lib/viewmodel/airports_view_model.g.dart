@@ -61,8 +61,9 @@ mixin _$AirportsViewModel on _AirportsViewModel, Store {
       AsyncAction('_AirportsViewModel.getAirportsDatas', context: context);
 
   @override
-  Future<dynamic> getAirportsDatas() {
-    return _$getAirportsDatasAsyncAction.run(() => super.getAirportsDatas());
+  Future<dynamic> getAirportsDatas(String param) {
+    return _$getAirportsDatasAsyncAction
+        .run(() => super.getAirportsDatas(param));
   }
 
   @override
