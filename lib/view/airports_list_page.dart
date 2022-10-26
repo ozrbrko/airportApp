@@ -1,13 +1,17 @@
+import 'package:airportal/model/airports_detail_model.dart';
 import 'package:airportal/model/airports_model.dart';
 import 'package:airportal/view/airports_map_page.dart';
 import 'package:airportal/view/login_page.dart';
+import 'package:airportal/view/marker_list.dart';
+import 'package:airportal/viewmodel/airports_detail_view_model.dart';
 import 'package:airportal/viewmodel/airports_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/src/api/observable_collections.dart';
 
 import '../component/constant/enum.dart';
 import '../component/responsive/frame_size.dart';
-
+import 'airports_detail_page.dart';
 
 class AirportsListPage extends StatefulWidget {
   const AirportsListPage({Key? key}) : super(key: key);
@@ -17,8 +21,8 @@ class AirportsListPage extends StatefulWidget {
 }
 
 class _AirportsListPageState extends State<AirportsListPage> {
-
   AirportsViewModel? airportsStore;
+  AirportsDetailViewModel? airportsDetailStore;
   var tfSearch = TextEditingController();
 
   @override
@@ -26,11 +30,17 @@ class _AirportsListPageState extends State<AirportsListPage> {
     airportsStore = AirportsViewModel();
     airportsStore!.init();
     airportsStore!.getAirportsDatas("ank");
+
+
+    airportsDetailStore = AirportsDetailViewModel();
+    airportsDetailStore!.init();
+    airportsDetailStore!.getAirportsDetailDatas();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+
     FrameSize.init(context: context);
 
     return Scaffold(
@@ -51,8 +61,50 @@ class _AirportsListPageState extends State<AirportsListPage> {
               ),
             ),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginPage()));
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Airportal"),
+                      content: Text(
+                        "Çıkış yapmak istediğinizden emin misiniz?",style: TextStyle(fontFamily: 'IBMPlexSans'),),
+                      actions: [
+                        ElevatedButton(
+                          child: Text(
+                            "Vazgeç",
+                            style: TextStyle(
+                                color: Color(0xff74A2B7),
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'IBMPlexSans'),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        ElevatedButton(
+                          child: Text(
+                            "Çıkış Yap",
+                            style: TextStyle(
+                                color: Color(0xff74A2B7),
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'IBMPlexSans'),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => LoginPage()));
+                          },
+                        ),
+                      ],
+                    );
+                  });
             },
           )
         ],
@@ -132,7 +184,7 @@ class _AirportsListPageState extends State<AirportsListPage> {
                                     TextField(
                                       controller: tfSearch,
                                       decoration: InputDecoration(
-                                          hintText: "Ara",
+                                          hintText: "Search",
                                           border: InputBorder.none),
                                     ),
                                     Positioned(
@@ -142,13 +194,56 @@ class _AirportsListPageState extends State<AirportsListPage> {
                                         child: GestureDetector(
                                           onTap: () {
                                             setState(() {
-                                              print(tfSearch.text);
-                                              airportsStore = AirportsViewModel();
-                                              airportsStore!.init();
-                                              airportsStore!.getAirportsDatas("${tfSearch.text}");
+                                              if (tfSearch.text.isEmpty == true || tfSearch.text.length <= 2) {
+
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        // contentPadding: EdgeInsets.only(top: 0.0),
+                                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(22.0))),
+                                                        content: Text(
+                                                          "Please enter text consisting of at least 3 letters.",
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontFamily: 'IBMPlexSans'),
+                                                        ),
+                                                        actions: [
+                                                          Center(
+                                                            child: ElevatedButton(
+                                                              child: Text(
+                                                                "Okey",
+                                                                style: TextStyle(
+                                                                    color: Colors.white,
+                                                                    fontSize: 17,
+                                                                    fontWeight:
+                                                                    FontWeight.bold,
+                                                                    fontFamily:
+                                                                    'IBMPlexSans'),
+                                                              ),
+                                                              style: ElevatedButton.styleFrom(
+                                                                primary: Colors.blue,
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.pop(context);
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    });
+
+
+
+                                              } else {
+                                                print(tfSearch.text);
+                                                airportsStore =
+                                                    AirportsViewModel();
+                                                airportsStore!.init();
+                                                airportsStore!.getAirportsDatas(
+                                                    "${tfSearch.text}");
+                                              }
                                             });
-
-
                                           },
                                           child: Container(
                                               height: FrameSize.screenHeight! /
@@ -174,7 +269,7 @@ class _AirportsListPageState extends State<AirportsListPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
+                    padding: const EdgeInsets.only(top: 0),
                     child: Stack(children: [
                       Container(
                         color: Colors.grey[100],
@@ -185,91 +280,102 @@ class _AirportsListPageState extends State<AirportsListPage> {
                             itemBuilder: (context, index) {
                               AirportsResult? item =
                                   airportsStore!.airportsResultList![index];
+                              ObservableList<AirportsDetailModel?>? goDetail =  airportsDetailStore!.airportsModelList;
+
+
                               return Column(
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(10.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        color: Colors.white
-                                      ),
-                                      width: FrameSize.screenWidth,
-                                      height: FrameSize.screenHeight! / 7,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(15.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "${item!.shortName!.toString()} ${item.countryCode!.toString()}",
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 5.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 8.0),
-                                                            child: Text(
-                                                                "Icao: ${item.icao.toString()} "),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 8.0),
-                                                            child: Text(
-                                                                "Iata: ${item.iata.toString()} "),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Column(
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 8.0,
-                                                                    left: 15.0),
-                                                            child: Text(
-                                                                "Lat: ${item.location!.lat.toString()} "),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 8.0,
-                                                                    left: 23),
-                                                            child: Text(
-                                                                "Lon: ${item.location!.lon.toString()} "),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
+                                    child: GestureDetector(
+                                      onTap:(){
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => AirportsDetailPage(cameList: item,)));
+                              },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            color: Colors.white),
+                                        width: FrameSize.screenWidth,
+                                        height: FrameSize.screenHeight! / 7,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "${item!.shortName!.toString()} ${item.countryCode!.toString()}",
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 5.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 8.0),
+                                                              child: Text(
+                                                                  "Icao: ${item.icao.toString()}"),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 8.0),
+                                                              child: Text(
+                                                                  "Iata: ${item.iata.toString()} "),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Column(
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 8.0,
+                                                                      left: 15.0),
+                                                              child: Text(
+                                                                  "Lat: ${item.location!.lat.toString()} "),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 8.0,
+                                                                      left: 23),
+                                                              child: Text(
+                                                                  "Lon: ${item.location!.lon.toString()} "),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -278,19 +384,19 @@ class _AirportsListPageState extends State<AirportsListPage> {
                               );
                             }),
                       ),
-
                       Positioned(
-                        left: FrameSize.screenWidth!/1.25,
-                        top: FrameSize.screenHeight!/1.5,
-                        child: FloatingActionButton( onPressed: () {
-
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => AirportsPage()));
-
-
-                        },
+                        left: FrameSize.screenWidth! / 1.25,
+                        top: FrameSize.screenHeight! / 1.6,
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AirportsPage()));
+                          },
                           backgroundColor: Color(0xff224459),
-                          child: const Icon(Icons.map),),
+                          child: const Icon(Icons.map),
+                        ),
                       )
                     ]),
                   )

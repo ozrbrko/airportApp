@@ -8,5 +8,7 @@ class ApiConfig {
   static const String getAirports = baseURL+ "airports/search/term";
 
 
+  static const String getAirportsDetail = baseURL+ "airports/icao/"+"ltad";
+
 
 }

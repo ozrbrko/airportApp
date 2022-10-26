@@ -64,13 +64,7 @@ class Location {
 
   String toRawJson() => json.encode(toJson());
 
-  factory Location.fromJson(Map<String, dynamic> json) => Location(
-    lat: json["lat"].toDouble(),
-    lon: json["lon"].toDouble(),
-  );
+  factory Location.fromJson(Map<String, dynamic> json) => _$LocationFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-    "lat": lat,
-    "lon": lon,
-  };
+  Map<String, dynamic> toJson() => _$LocationToJson(this);
 }
