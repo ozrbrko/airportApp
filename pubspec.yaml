@@ -41,6 +41,7 @@ dependencies:
   build_runner: ^2.2.0
   form_field_validator: ^1.1.0
   google_maps_flutter:
+  rflutter_alert: ^2.0.4
 
 dev_dependencies:
   flutter_test:

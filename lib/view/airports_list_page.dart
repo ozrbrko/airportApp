@@ -1,8 +1,7 @@
+import 'package:airportal/component/utils/alert_dialog.dart';
 import 'package:airportal/model/airports_detail_model.dart';
 import 'package:airportal/model/airports_model.dart';
 import 'package:airportal/view/airports_map_page.dart';
-import 'package:airportal/view/login_page.dart';
-import 'package:airportal/view/marker_list.dart';
 import 'package:airportal/viewmodel/airports_detail_view_model.dart';
 import 'package:airportal/viewmodel/airports_view_model.dart';
 import 'package:flutter/material.dart';
@@ -61,50 +60,7 @@ class _AirportsListPageState extends State<AirportsListPage> {
               ),
             ),
             onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text("Airportal"),
-                      content: Text(
-                        "Çıkış yapmak istediğinizden emin misiniz?",style: TextStyle(fontFamily: 'IBMPlexSans'),),
-                      actions: [
-                        ElevatedButton(
-                          child: Text(
-                            "Vazgeç",
-                            style: TextStyle(
-                                color: Color(0xff74A2B7),
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'IBMPlexSans'),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        ElevatedButton(
-                          child: Text(
-                            "Çıkış Yap",
-                            style: TextStyle(
-                                color: Color(0xff74A2B7),
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'IBMPlexSans'),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                          ),
-                          onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => LoginPage()));
-                          },
-                        ),
-                      ],
-                    );
-                  });
+              AlertDialogFunctions.exitApp(context);
             },
           )
         ],
@@ -233,6 +189,9 @@ class _AirportsListPageState extends State<AirportsListPage> {
                                                       );
                                                     });
 
+                                                // AlertDialogFunctions.alertInfo(context);
+
+
 
 
                                               } else {
@@ -289,10 +248,12 @@ class _AirportsListPageState extends State<AirportsListPage> {
                                     padding: const EdgeInsets.all(10.0),
                                     child: GestureDetector(
                                       onTap:(){
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => AirportsDetailPage(cameList: item,)));
+
+                                        AlertDialogFunctions.airportDetail(context,item);
+                                        // Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //         builder: (context) => AirportsDetailPage(cameList: item,)));
                               },
                                       child: Container(
                                         decoration: BoxDecoration(

@@ -1,4 +1,5 @@
 import 'package:airportal/component/responsive/frame_size.dart';
+import 'package:airportal/component/utils/alert_dialog.dart';
 import 'package:airportal/model/airports_model.dart';
 import 'package:flutter/material.dart';
 
@@ -45,50 +46,7 @@ class _AirportsDetailPageState extends State<AirportsDetailPage> {
               ),
             ),
             onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text("Airportal"),
-                      content: Text(
-                        "Çıkış yapmak istediğinizden emin misiniz?",style: TextStyle(fontFamily: 'IBMPlexSans'),),
-                      actions: [
-                        ElevatedButton(
-                          child: Text(
-                            "Vazgeç",
-                            style: TextStyle(
-                                color: Color(0xff74A2B7),
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'IBMPlexSans'),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        ElevatedButton(
-                          child: Text(
-                            "Çıkış Yap",
-                            style: TextStyle(
-                                color: Color(0xff74A2B7),
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'IBMPlexSans'),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                          ),
-                          onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => LoginPage()));
-                          },
-                        ),
-                      ],
-                    );
-                  });
+              AlertDialogFunctions.exitApp(context);
             },
           )
         ],
@@ -97,7 +55,7 @@ class _AirportsDetailPageState extends State<AirportsDetailPage> {
         shadowColor: Color(0xffD97D48),
       ),
       body: Container(
-        color: Colors.blue,
+        color: Colors.grey[100],
         width: FrameSize.screenWidth,
         child: Column(
           children: [
@@ -106,14 +64,13 @@ class _AirportsDetailPageState extends State<AirportsDetailPage> {
               child: Container(
                 width: FrameSize.screenWidth,
                 height: 200,
-                color: Colors.white,
                 child: Column(
 
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text("${widget.cameList!.icao}",style: TextStyle(fontSize: 35),),
-                    Text("icao: dsfsdfsd",style: TextStyle(fontSize: 15),),
-                    Text("ülke: dsfsdfdsdf",style: TextStyle(fontSize: 15),),
+                    Text("${widget.cameList!.shortName}",style: TextStyle(fontSize: 35),),
+                    Text("${widget.cameList!.icao}",style: TextStyle(fontSize: 15),),
+                    Text("${widget.cameList!.municipalityName}",style: TextStyle(fontSize: 15),),
 
                   ],
                 ),
@@ -122,15 +79,6 @@ class _AirportsDetailPageState extends State<AirportsDetailPage> {
             ),
 
 
-            Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: Container(
-                height: 200,
-                width: FrameSize.screenWidth,
-                color: Colors.white,
-                child: Text("Website"),
-              ),
-            )
           ],
         ),
       ),
